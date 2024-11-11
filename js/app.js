@@ -5,7 +5,7 @@ const lineShape = `<div class="one-line slide-line"></div>`;
 const specificLineShap=`<div class="specific-line slide-line"></div>`
 let lineShapesHtml = ''; // Initialize an empty string to hold all line shapes
 
-for (let i = 2010; i < 2100; i+=10) {
+for (let i = 1010; i < 2100; i+=10) {
     if(i%100==0)
     {
         lineShapesHtml += `<div id="${i}" class="specific-line slide-line"></div>`;; // Concatenate the LineShape for each year
@@ -15,14 +15,14 @@ for (let i = 2010; i < 2100; i+=10) {
     }
 }
 
-const activeSlide= [1990,1700,2000];
+// const activeSlide= [1990,1700,2000];
 
-activeSlide.forEach((activeYear)=>{
-    const slideActive= document.getElementById(activeYear);
-    console.log(slideActive);
-    // slideActive.classList.add('s')
-});
-
+// activeSlide.forEach((activeYear)=>{
+//     const slideActive= document.getElementById(activeYear);
+//     console.log(slideActive);
+//     // slideActive.classList.add('s')
+// });
+var isDragging = false;
 const lines= `<div class="lines"> `
 // Set the inner HTML of the timeLine element to the concatenated string
 const imsElementEl= `<div id="draggable">
@@ -45,7 +45,7 @@ document.addEventListener('mousemove', function(e) {
         const imgRect = imsElement.getBoundingClientRect();
 
         if (x >= timeLine.offsetLeft && (x + imgRect.width) <= containerRect.right) {
-            imsElement.style.left = `${x - timeLine.offsetLeft+13}px`;
+            imsElement.style.left = `${x - timeLine.offsetLeft+(imsElement.offsetWidth/2)}px`;
         }
     }
 });
@@ -79,31 +79,100 @@ function animateElementToPosition(element, targetPosition, duration) {
 }
 
 const linesTime = document.getElementsByClassName('slide-line');
-
+const allSlides= document.querySelectorAll('[slide-year]');
+    const slideYears = [];
+    allSlides.forEach(slide => { slideYears.push(slide.getAttribute('slide-year')); });
+    console.log(slideYears);
 imsElement.addEventListener('mouseup', function() {
     isDragging = false;
+    console.log("s1");
     imsElement.classList.remove('dragging');
-    function calculateHorizontalDistance(element1, element2) {
-        const rect1 = element1.getBoundingClientRect();
-        const rect2 = element2.getBoundingClientRect();
-    
-        const dx = Math.abs(rect1.left - rect2.left);  
-        return dx;
+    // const activeSlide = document.querySelector('[slide-year].active');
+    // allSlides.forEach((s)=>{
+    //     console.log(s.getBoundingClientRect().left);
+    //     console.log(s.getAttribute('slide-year'));
+    //     // if()
+    // })
+    const minYear = Math.min(...slideYears); 
+    const maxYear = Math.max(...slideYears);
+    var oldSlide= document.querySelector(`[slide-year="${minYear}"]`);
+    var lastSlide= document.querySelector(`[slide-year="${maxYear}"]`);
+    var slideLine;
+    if( imsElement.offsetLeft> lastSlide.offsetLeft)
+    {
+        translateToYear(maxYear);
+    }
+    else if(imsElement.offsetLeft < oldSlide.offsetLeft)
+    {
+        translateToYear(minYear);
+    }
+    else{
+    for(let slide of allSlides)
+    {
+        console.log("s2");
+        slideLine= document.getElementById(slide.getAttribute('slide-year'));
+        if((slideLine.offsetLeft-(imsElement.offsetWidth/2)) >= (imsElement.offsetLeft))
+        {
+            var oldSlideYear= document.getElementById(oldSlide.getAttribute('slide-year'));
+            if((imsElement.offsetLeft-( oldSlideYear.offsetLeft - imsElement.offsetWidth/2 )>=(slideLine.offsetLeft- imsElement.offsetLeft - (imsElement.offsetWidth/2))))
+            {
+                console.log("s31");
+                var newSlideYear= slide.getAttribute('slide-year');
+                console.log(newSlideYear);
+            }else{
+                console.log("s32");
+                var newSlideYear= oldSlide.getAttribute('slide-year');
+                console.log(newSlideYear);
+            }
+            console.log("s4");
+            translateToYear(newSlideYear)
+            break;
+        }
+        console.log("s5");
+        oldSlide=slide;
     }
         
-    let closestElement = null;
-    let minDistance = Infinity;
+}
     
-    for (let line of linesTime) {
-        const distance = calculateHorizontalDistance(imsElement, line);
-    
-        if (distance < minDistance) {
-            minDistance = distance;
-            closestElement = line;
-        }
-    }
-    let goalPosition= closestElement.getBoundingClientRect().left;
-    animateElementToPosition(imsElement, goalPosition - (imsElement.offsetWidth/2)-7 , 800);
-    console.log(closestElement);
+    console.log("s6");
     
 });
+
+function translateToYear(year) 
+{
+    const targetDiv = document.getElementById(year); 
+    const imsElement = document.getElementById('draggable');
+    const activeSlide= document.querySelector(`[slide-year="${year}"]`)
+    allSlides.forEach((e)=>{
+        e.classList.remove('active');
+    })
+    activeSlide.classList.add('active');
+    if (targetDiv && imsElement) 
+    { 
+        const targetRect = targetDiv.getBoundingClientRect(); 
+
+        // const imsRect = imsElement.getBoundingClientRect(); 
+        // const translateX = targetRect.left - imsRect.left; 
+        
+        imsElement.classList.add("translate")
+        imsElement.style.cssText= `left: ${targetRect.left-(imsElement.offsetWidth/2)-5}px`
+        setTimeout(() => {
+            imsElement.classList.remove("translate")
+        }, 800);
+        // imsElement.style.transform = `translateX(${translateX}px)`; 
+    } else { 
+        console.error('Target div or imsElement not found'); 
+    } 
+}
+
+console.log("allSlides")
+console.log(allSlides)
+allSlides.forEach((slide)=>{
+    slide.addEventListener('click',function(){
+            console.log('slidedd')
+            console.log(slide.getAttribute('slide-year'))
+            translateToYear(slide.getAttribute('slide-year'));
+
+    })
+})
+
