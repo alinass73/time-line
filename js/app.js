@@ -1,40 +1,35 @@
 
-
-const timeLine = document.getElementById('time-line');
+const time_line_id= "time-line"
+const timeLine = document.getElementById(time_line_id);
 const lineShape = `<div class="one-line slide-line"></div>`;
 const specificLineShap=`<div class="specific-line slide-line"></div>`
 let lineShapesHtml = ''; // Initialize an empty string to hold all line shapes
+const steps=10;
+const strat_time_line=1010;
+const end_time_line= 2100;
 
-for (let i = 1010; i < 2100; i+=10) {
+for (let i = strat_time_line; i < end_time_line; i+=steps) {
     if(i%100==0)
     {
-        lineShapesHtml += `<div id="${i}" class="specific-line slide-line"></div>`;; // Concatenate the LineShape for each year
+        lineShapesHtml += `<div id="${i}" class="specific-line slide-line"></div>`; 
     }else{
-        // lineShapesHtml += lineShape; // Concatenate the LineShape for each year
-        lineShapesHtml += `<div id="${i}" class="one-line slide-line"></div>`; // Concatenate the LineShape for each year
+        // lineShapesHtml += lineShape 
+        lineShapesHtml += `<div id="${i}" class="one-line slide-line"></div>` ;
     }
 }
 
-// const activeSlide= [1990,1700,2000];
-
-// activeSlide.forEach((activeYear)=>{
-//     const slideActive= document.getElementById(activeYear);
-//     console.log(slideActive);
-//     // slideActive.classList.add('s')
-// });
+ 
 var isDragging = false;
 const lines= `<div class="lines"> `
-// Set the inner HTML of the timeLine element to the concatenated string
 const imsElementEl= `<div id="draggable">
 <div class="inner"></div>
 </div>`;
 timeLine.innerHTML = lines +lineShapesHtml + `</div>${imsElementEl} `;
-// timeLine.innerHTML=
 const imsElement= document.getElementById('draggable');
 
 imsElement.addEventListener('mousedown', function(e) {
     isDragging = true;
-    offsetXx = e.clientX - imsElement.offsetLeft;
+    offsetXx = e.clientX - imsElement.getBoundingClientRect().left;
     imsElement.classList.add('dragging');
 });
 
@@ -45,7 +40,7 @@ document.addEventListener('mousemove', function(e) {
         const imgRect = imsElement.getBoundingClientRect();
 
         if (x >= timeLine.offsetLeft && (x + imgRect.width) <= containerRect.right) {
-            imsElement.style.left = `${x - timeLine.offsetLeft+(imsElement.offsetWidth/2)}px`;
+            imsElement.style.left = `${x - timeLine.offsetLeft}px`;
         }
     }
 });
@@ -60,16 +55,13 @@ function animateElementToPosition(element, targetPosition, duration) {
         const elapsed = currentTime - startTime;
         const progress = Math.min(elapsed / duration, 1); // Ensure progress doesn't exceed 1
 
-        // Apply an ease-in-out function
         const easeInOutProgress = progress < 0.5
             ? 2 * progress * progress
             : -1 + (4 - 2 * progress) * progress;
 
-        // Calculate the current position
         const currentPosition = startPosition + distance * easeInOutProgress;
         element.style.left = `${currentPosition}px`;
 
-        // Continue the animation if it's not complete
         if (progress < 1) {
             requestAnimationFrame(animate);
         }
@@ -87,48 +79,39 @@ imsElement.addEventListener('mouseup', function() {
     isDragging = false;
     console.log("s1");
     imsElement.classList.remove('dragging');
-    // const activeSlide = document.querySelector('[slide-year].active');
-    // allSlides.forEach((s)=>{
-    //     console.log(s.getBoundingClientRect().left);
-    //     console.log(s.getAttribute('slide-year'));
-    //     // if()
-    // })
     const minYear = Math.min(...slideYears); 
     const maxYear = Math.max(...slideYears);
     var oldSlide= document.querySelector(`[slide-year="${minYear}"]`);
     var lastSlide= document.querySelector(`[slide-year="${maxYear}"]`);
     var slideLine;
-    if( imsElement.offsetLeft> lastSlide.offsetLeft)
+    console.log("imsElement.offsetLeft")
+    console.log(imsElement.offsetLeft)
+    console.log("lastSlide.offsetLeft")
+    console.log(oldSlide.offsetLeft)
+    if( imsElement.getBoundingClientRect().left > lastSlide.getBoundingClientRect().left)
     {
         translateToYear(maxYear);
     }
-    else if(imsElement.offsetLeft < oldSlide.offsetLeft)
+    else if(imsElement.getBoundingClientRect().left < oldSlide.getBoundingClientRect().left)
     {
         translateToYear(minYear);
     }
     else{
     for(let slide of allSlides)
     {
-        console.log("s2");
         slideLine= document.getElementById(slide.getAttribute('slide-year'));
         if((slideLine.offsetLeft-(imsElement.offsetWidth/2)) >= (imsElement.offsetLeft))
         {
             var oldSlideYear= document.getElementById(oldSlide.getAttribute('slide-year'));
             if((imsElement.offsetLeft-( oldSlideYear.offsetLeft - imsElement.offsetWidth/2 )>=(slideLine.offsetLeft- imsElement.offsetLeft - (imsElement.offsetWidth/2))))
             {
-                console.log("s31");
                 var newSlideYear= slide.getAttribute('slide-year');
-                console.log(newSlideYear);
             }else{
-                console.log("s32");
                 var newSlideYear= oldSlide.getAttribute('slide-year');
-                console.log(newSlideYear);
             }
-            console.log("s4");
             translateToYear(newSlideYear)
             break;
         }
-        console.log("s5");
         oldSlide=slide;
     }
         
@@ -149,17 +132,15 @@ function translateToYear(year)
     activeSlide.classList.add('active');
     if (targetDiv && imsElement) 
     { 
-        const targetRect = targetDiv.getBoundingClientRect(); 
+        const targetRect = targetDiv.offsetLeft; 
 
-        // const imsRect = imsElement.getBoundingClientRect(); 
-        // const translateX = targetRect.left - imsRect.left; 
         
         imsElement.classList.add("translate")
-        imsElement.style.cssText= `left: ${targetRect.left-(imsElement.offsetWidth/2)-5}px`
+
+        imsElement.style.cssText= `left: ${targetRect-(imsElement.offsetWidth/2)-5}px`
         setTimeout(() => {
             imsElement.classList.remove("translate")
         }, 800);
-        // imsElement.style.transform = `translateX(${translateX}px)`; 
     } else { 
         console.error('Target div or imsElement not found'); 
     } 
