@@ -2,10 +2,11 @@ import TimeLineSlider from '../TimeLineSlider.js'; // adjust the path if needed
 
 const timeLineSlider = new TimeLineSlider();
 
- timeLineSlider.setStartEnd(1100,2100)
- timeLineSlider.setStep(10);
+ timeLineSlider.setStartEnd(1950,2020)
+ timeLineSlider.setStep(1);
+ timeLineSlider.setSpecialStep(10);
 //  timeLineSlider.setActiveSlideClass('active-slide')
- console.log(timeLineSlider); // Check if the instance is properly created
+ console.log(timeLineSlider); 
 // timeLineSlider.setActiveSlideClass('active-slide')
 
 // const time_line_id= "time-line"

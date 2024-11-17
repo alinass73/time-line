@@ -13,7 +13,7 @@
 .specific-line{
     height: 77px;
     width: 2px;
-    background-color: #e2c11d;
+    background-color: #d8b711;
 }
 
 .lines{
@@ -79,6 +79,6 @@
     padding-inline: 16px;
 }
 .active{
-    background-color: #e2c11d;
+    background-color: #d8b711;
 }
  
