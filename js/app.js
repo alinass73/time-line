@@ -3,7 +3,7 @@ import TimeLineSlider from '../TimeLineSlider.js'; // adjust the path if needed
 const timeLineSlider = new TimeLineSlider();
 
  timeLineSlider.setStartEnd(1100,2100)
- timeLineSlider.setStep(20)
+ timeLineSlider.setStep(10)
 //  timeLineSlider.setActiveSlideClass('active-slide')
  console.log(timeLineSlider); // Check if the instance is properly created
 // timeLineSlider.setActiveSlideClass('active-slide')
