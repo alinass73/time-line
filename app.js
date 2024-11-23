@@ -1,6 +1,6 @@
-import TimeLineSlider from './node_modules/timeline-slider/src/TimeLineSlider.js';
 // console.log(/)
 // import TimeLineSlider from 'timeline-slider'; 
+import TimeLineSlider from '../TimeLineSlider.js';
 
 // import 'timeline-slider/css';
 
