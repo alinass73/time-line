@@ -28,7 +28,12 @@
 body{
     background-color: #b5ad85;
 }
-
+ 
+.note h2{
+    margin-top: 20px;
+    display: none;
+    text-align: center;
+  }
 
 /*  */
 
